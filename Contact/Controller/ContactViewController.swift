@@ -34,8 +34,8 @@ class ContactViewController: UIViewController {
     
     func getObserve() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleNewContactAdded), name: .addNewContact, object: nil)
-        NotificationCenter.default.addObserver(self
-                                               , selector: #selector(handleDeleteContact), name: .deleteContact, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteContact), name: .deleteContact, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateContact), name: .updateContact, object: nil)
     }
     
     @objc func handleNewContactAdded() {
@@ -43,6 +43,10 @@ class ContactViewController: UIViewController {
     }
     
     @objc func handleDeleteContact() {
+        reloadData()
+    }
+    
+    @objc func handleUpdateContact() {
         reloadData()
     }
     
@@ -60,6 +64,9 @@ class ContactViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         let addButton = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done, target: self, action: #selector(addButtonTapped))
         navigationItem.rightBarButtonItem = addButton
+        navigationItem.leftBarButtonItem = editButtonItem
+        editButtonItem.target = self
+        editButtonItem.action = #selector(editButtonTapped)
     }
     
     func loadData() {
@@ -75,15 +82,27 @@ class ContactViewController: UIViewController {
         viewModel?.getContact()
         DispatchQueue.main.async {
             self.contactTableView.reloadData()
+            print("Reload")
         }
     }
     
     @objc
     func addButtonTapped() {
-        let addContactViewController = AddContactViewController()
-        addContactViewController.contactViewModel = self.viewModel
-        let navAddContactViewController = UINavigationController(rootViewController: addContactViewController)
-        self.present(navAddContactViewController, animated: true, completion: nil)
+        let inputContactViewController = InputContactViewController()
+        inputContactViewController.contactViewModel = self.viewModel
+        inputContactViewController.selector = .doneAddButton
+        let navInputContactViewController = UINavigationController(rootViewController: inputContactViewController)
+        self.present(navInputContactViewController, animated: true, completion: nil)
+    }
+    
+    @objc func editButtonTapped() {
+        if navigationItem.leftBarButtonItem?.title == "Edit" {
+            contactTableView.isEditing = true
+            navigationItem.leftBarButtonItem?.title = "Done"
+        } else {
+            contactTableView.isEditing = false
+            navigationItem.leftBarButtonItem?.title = "Edit"
+        }
     }
     
     func configureContactTableView() {
@@ -98,29 +117,60 @@ class ContactViewController: UIViewController {
         ]
         NSLayoutConstraint.activate(contactTableViewContrains)
     }
-    
 }
 
 extension ContactViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        viewModel?.deleteContact(contact: (viewModel?.sections[indexPath.section][indexPath.row])!)
+        //        viewModel?.deleteContact(contact: (viewModel?.sections[indexPath.section][indexPath.row])!)
         
         let contactDetailViewController = ContactDetailViewController()
+        contactDetailViewController.contactViewModel = viewModel
         contactDetailViewController.contact = viewModel?.sections[indexPath.section][indexPath.row]
         self.navigationController?.pushViewController(contactDetailViewController, animated: true)
         
     }
     
-//    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-//        true
-//    }
-//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        <#code#>
-//    }
-//
-//    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-//        <#code#>
-//    }
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .normal,
+                                        title: "Edit") {
+            [self] (action, view, handler) in
+            let contactToUpdate = viewModel?.sections[indexPath.section][indexPath.row]
+            
+            let inputContactViewController = InputContactViewController()
+            inputContactViewController.originalContact = contactToUpdate
+            inputContactViewController.contactViewModel = viewModel
+            inputContactViewController.selector = .doneEditButton
+            let navInputContactViewController = UINavigationController(rootViewController: inputContactViewController)
+            self.present(navInputContactViewController, animated: true, completion: nil)
+            tableView.setEditing(false, animated: true)
+        }
+        let swipeAction = UISwipeActionsConfiguration(actions: [action])
+        
+        return swipeAction
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive,
+                                        title: "Delete") { [self](action, view, handler) in
+            let contactToDelete = viewModel?.sections[indexPath.section][indexPath.row]
+            
+            let alertController = UIAlertController(title: "Confirm Deletion", message: "Are you sure you want to delete this contact?", preferredStyle: .alert)
+            
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            
+            alertController.addAction(UIAlertAction(title: "Delete", style: .destructive) { [self] (deleteAction) in
+                viewModel?.deleteContact(contact: contactToDelete!)
+            })
+            
+            present(alertController, animated: true, completion: nil)
+            
+            handler(true)
+        }
+        let swipeAction = UISwipeActionsConfiguration(actions: [action])
+        return swipeAction
+        
+    }
+    
 }
 
 extension ContactViewController: UITableViewDataSource {
@@ -151,7 +201,20 @@ extension ContactViewController: UITableViewDataSource {
         
         contact = (viewModel?.sections[indexPath.section][indexPath.row])!
         cell.nameLabel.text = contact.name
-        
+        //        cell.selectionStyle = .none
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if let sourceContact = viewModel?.sections[sourceIndexPath.section][sourceIndexPath.row], let destinationContact = viewModel?.sections[destinationIndexPath.section][destinationIndexPath.row] {
+//            if sourceIndexPath.section != destinationIndexPath.section {
+//                sou
+//            }
+            viewModel?.swapContacts(sourceContact, destinationContact)
+        }
     }
 }

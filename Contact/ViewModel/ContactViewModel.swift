@@ -7,11 +7,12 @@
 
 import Foundation
 import CoreData
-import UIKit
 
 protocol ContactViewModelProtocol {
     func addContact(name: String, mail: String, phoneNumber: String)
+    func updateContact(oldName: String, newName: String, newMail: String, newPhoneNumber: String)
     func importContact(completion: @escaping () -> Void)
+    func swapContacts(_ sourceContact: Contact,_ destinationContact: Contact)
     func getContact()
     func deleteContact(contact: Contact)
     var contacts: [Contact] {get set}
@@ -45,6 +46,7 @@ extension ContactViewModel: ContactViewModelProtocol {
         contact.name = name
         contact.mail = mail
         contact.phoneNumber = phoneNumber
+        contact.isMain = false
         do {
             try context.save()
             NotificationCenter.default.post(name: .addNewContact,object: nil)
@@ -52,6 +54,7 @@ extension ContactViewModel: ContactViewModelProtocol {
             print("Error checking or saving contacts: \(error)")
         }
     }
+    
     func deleteContact(contact: Contact) {
         let context = persistentContainer.viewContext
         do {
@@ -63,6 +66,29 @@ extension ContactViewModel: ContactViewModelProtocol {
         }
     }
     
+    func updateContact(oldName: String, newName: String, newMail: String, newPhoneNumber: String) {
+        let context = persistentContainer.viewContext
+
+        let fetchRequest = NSFetchRequest<Contact>(entityName: "Contact")
+        fetchRequest.predicate = NSPredicate(format: "name == %@", oldName)
+
+        do {
+            let existingContacts = try context.fetch(fetchRequest)
+
+            if let contact = existingContacts.first {
+                contact.name = newName
+                contact.mail = newMail
+                contact.phoneNumber = newPhoneNumber
+                try context.save()
+                NotificationCenter.default.post(name: .updateContact, object: nil, userInfo: ["updatedContact": contact])
+            } else {
+                print("Contact with name \(oldName) not found.")
+            }
+        } catch {
+            print("Error updating contact: \(error)")
+        }
+    }
+
     func importContact(completion: @escaping () -> Void) {
         baseFetcher?.getContact(completion: { result in
             switch result {
@@ -73,6 +99,19 @@ extension ContactViewModel: ContactViewModelProtocol {
                 self.importContactFaild(error: error)
             }
         })
+    }
+    
+    func swapContacts(_ sourceContact: Contact, _ destinationContact: Contact) {
+        let context = persistentContainer.viewContext
+        let tempName = sourceContact.name
+        sourceContact.name = destinationContact.name
+        destinationContact.name = tempName
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error while saving: \(error)")
+        }
     }
     
     private func importContactSuccess(data: [APIContact]) {
@@ -121,18 +160,19 @@ extension ContactViewModel: ContactViewModelProtocol {
             }
             
             let sortedContacts = contacts.sorted {
-                $0.name! < $1.name!
+                $0.name!.lowercased() < $1.name!.lowercased()
             }
+            
+//            let sortedContacts = contacts
             
             if let mainContact = mainContact {
                 sections.append([mainContact])
             }
             
             for contact in sortedContacts {
-                
-                if let firstCharacter = contact.name!.first {
+                if let firstCharacter = contact.name!.lowercased().first {
                     if let index = sections.firstIndex(where: {
-                        $0.first?.name!.first == firstCharacter && $0.first?.isMain == false
+                        $0.first?.name!.lowercased().first == firstCharacter && $0.first?.isMain == false
                     }) {
                         sections[index].append(contact)
                     } else {
@@ -140,6 +180,7 @@ extension ContactViewModel: ContactViewModelProtocol {
                     }
                 }
             }
+            print("getContact")
         } catch {
             print("Error fetching contacts: \(error)")
         }

@@ -12,4 +12,5 @@ import NotificationCenter
 extension Notification.Name {
     static let addNewContact = Notification.Name("addNewContact")
     static let deleteContact = Notification.Name("deleteContact")
+    static let updateContact = Notification.Name("updateContact")
 }

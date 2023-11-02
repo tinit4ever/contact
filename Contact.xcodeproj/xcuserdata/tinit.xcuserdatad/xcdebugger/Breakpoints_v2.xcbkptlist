@@ -14,8 +14,8 @@
             filePath = "Contact/ViewModel/ContactViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
+            startingLineNumber = "177"
+            endingLineNumber = "177"
             landmarkName = "getContact()"
             landmarkType = "7">
          </BreakpointContent>

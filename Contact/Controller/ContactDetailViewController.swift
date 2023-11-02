@@ -4,10 +4,11 @@
 //
 //  Created by tinit on 31/10/2023.
 //
-
+//
 import UIKit
 
 class ContactDetailViewController: UIViewController {
+    var contactViewModel: ContactViewModelProtocol?
     // Create UI
     
     enum ContactDetailSection: Int {
@@ -29,6 +30,10 @@ class ContactDetailViewController: UIViewController {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         imageView.image = UIImage(named: "lee-sin")
         imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = UIColor.lightGray
+        imageView.layer.cornerRadius = 50
+        imageView.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -76,7 +81,7 @@ class ContactDetailViewController: UIViewController {
     
     private let videoButton: UIButton = {
         let button = UIButton()
-
+        
         var configuration = UIButton.Configuration.gray()
         configuration.title = "video"
         configuration.attributedTitle?.font = UIFont.systemFont(ofSize: 14)
@@ -127,6 +132,15 @@ class ContactDetailViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         confiureUI()
         navConfig()
+        addObserve()
+        nameLabel.text = contact?.name
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        DispatchQueue.main.async { [self] in
+            contactDetailTableView.reloadData()
+        }
+        nameLabel.text = contact?.name
     }
     
     // Config UI
@@ -136,7 +150,7 @@ class ContactDetailViewController: UIViewController {
             topView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topView.leftAnchor.constraint(equalTo: view.leftAnchor),
             topView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            topView.heightAnchor.constraint(equalToConstant: 200)
+            topView.heightAnchor.constraint(equalToConstant: 230)
         ])
         view.addSubview(contactDetailTableView)
         contactDetailTableView.delegate = self
@@ -152,6 +166,20 @@ class ContactDetailViewController: UIViewController {
     }
     
     func confiureTopView() {
+        let name = contact?.name ?? ""
+        let firstCharacter = name.prefix(1)
+        let letter = String(firstCharacter)
+        let textAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 70),
+            .foregroundColor: UIColor.black
+        ]
+        let letterImage = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100)).image { _ in
+            let letterSize = letter.size(withAttributes: textAttributes)
+            let rect = CGRect(x: (100 - letterSize.width) / 2, y: (100 - letterSize.height) / 2, width: letterSize.width, height: letterSize.height)
+            let centeredOrigin = CGPoint(x: rect.origin.x, y: (100 - letterSize.height) / 2)
+            letter.draw(at: centeredOrigin, withAttributes: textAttributes)
+        }
+        avatar.image = letterImage
         topView.addSubview(avatar)
         NSLayoutConstraint.activate([
             avatar.topAnchor.constraint(equalTo: topView.topAnchor),
@@ -161,9 +189,8 @@ class ContactDetailViewController: UIViewController {
         ])
         
         topView.addSubview(nameLabel)
-        nameLabel.text = contact?.name
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 10),
+            nameLabel.topAnchor.constraint(equalTo: topView.topAnchor , constant: 110),
             nameLabel.centerXAnchor.constraint(equalTo: topView.centerXAnchor),
             nameLabel.heightAnchor.constraint(equalToConstant: 25)
         ])
@@ -184,19 +211,35 @@ class ContactDetailViewController: UIViewController {
     }
     
     func navConfig() {
-        let editButton = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: nil)
+        let editButton = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(editButtonTapped))
         navigationItem.rightBarButtonItem = editButton
     }
     
     // Action UI
+    func addObserve() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateContactNotification(_:)), name: .updateContact, object: nil)
+    }
+    @objc func handleUpdateContactNotification(_ notification: Notification) {
+        if let userInfo = notification.userInfo,
+           let updatedContact = userInfo["updatedContact"] as? Contact {
+            self.contact = updatedContact
+        }
+    }
     @objc func deteteButtonTaped() {
         
     }
     
+    @objc
+    func editButtonTapped() {
+        let inputContactViewController = InputContactViewController()
+        inputContactViewController.contactViewModel = self.contactViewModel
+        inputContactViewController.selector = .doneEditButton
+        inputContactViewController.originalContact = contact
+        self.navigationController?.pushViewController(inputContactViewController, animated: true)
+    }
 }
 
 extension ContactDetailViewController: UITableViewDelegate {
-    
     
 }
 

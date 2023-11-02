@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		130CB7A62AF0DD4F005EF92E /* AddContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130CB7A52AF0DD4F005EF92E /* AddContactViewController.swift */; };
+		130CB7A62AF0DD4F005EF92E /* InputContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130CB7A52AF0DD4F005EF92E /* InputContactViewController.swift */; };
 		130CB7A82AF0E02C005EF92E /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130CB7A72AF0E02C005EF92E /* NotificationName.swift */; };
 		130CB7AA2AF0EA1F005EF92E /* ContactDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130CB7A92AF0EA1F005EF92E /* ContactDetailViewController.swift */; };
 		130CB7AC2AF0F12C005EF92E /* ContactDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130CB7AB2AF0F12C005EF92E /* ContactDetailTableViewCell.swift */; };
-		136B136E2AF1075200FF4E18 /* Asset.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 136B136D2AF1075200FF4E18 /* Asset.xcassets */; };
+		1312ED2C2AF36122007755DE /* UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1312ED2B2AF36122007755DE /* UITextField.swift */; };
+		1312ED2E2AF36B73007755DE /* Selector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1312ED2D2AF36B73007755DE /* Selector.swift */; };
 		1380DF012AEF5470003761AB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1380DF002AEF5470003761AB /* AppDelegate.swift */; };
 		1380DF032AEF5470003761AB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1380DF022AEF5470003761AB /* SceneDelegate.swift */; };
 		1380DF0B2AEF5470003761AB /* Contact.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1380DF092AEF5470003761AB /* Contact.xcdatamodeld */; };
@@ -47,11 +48,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		130CB7A52AF0DD4F005EF92E /* AddContactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactViewController.swift; sourceTree = "<group>"; };
+		130CB7A52AF0DD4F005EF92E /* InputContactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputContactViewController.swift; sourceTree = "<group>"; };
 		130CB7A72AF0E02C005EF92E /* NotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
 		130CB7A92AF0EA1F005EF92E /* ContactDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailViewController.swift; sourceTree = "<group>"; };
 		130CB7AB2AF0F12C005EF92E /* ContactDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailTableViewCell.swift; sourceTree = "<group>"; };
-		136B136D2AF1075200FF4E18 /* Asset.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Asset.xcassets; sourceTree = "<group>"; };
+		1312ED2B2AF36122007755DE /* UITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextField.swift; sourceTree = "<group>"; };
+		1312ED2D2AF36B73007755DE /* Selector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selector.swift; sourceTree = "<group>"; };
 		1380DEFD2AEF5470003761AB /* Contact.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Contact.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1380DF002AEF5470003761AB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1380DF022AEF5470003761AB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -101,7 +103,6 @@
 		1380DEF42AEF5470003761AB = {
 			isa = PBXGroup;
 			children = (
-				136B136D2AF1075200FF4E18 /* Asset.xcassets */,
 				1380DEFF2AEF5470003761AB /* Contact */,
 				1380DF192AEF5472003761AB /* ContactTests */,
 				1380DF232AEF5472003761AB /* ContactUITests */,
@@ -158,6 +159,7 @@
 			children = (
 				1380DF442AEF5EFF003761AB /* ContactTableViewCell.swift */,
 				130CB7AB2AF0F12C005EF92E /* ContactDetailTableViewCell.swift */,
+				1312ED2B2AF36122007755DE /* UITextField.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -169,6 +171,7 @@
 				1380DF412AEF5AD5003761AB /* Contact+CoreDataProperties.swift */,
 				1380DF3E2AEF596B003761AB /* Contact.swift */,
 				130CB7A72AF0E02C005EF92E /* NotificationName.swift */,
+				1312ED2D2AF36B73007755DE /* Selector.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -185,7 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				1380DF382AEF5615003761AB /* ContactViewController.swift */,
-				130CB7A52AF0DD4F005EF92E /* AddContactViewController.swift */,
+				130CB7A52AF0DD4F005EF92E /* InputContactViewController.swift */,
 				130CB7A92AF0EA1F005EF92E /* ContactDetailViewController.swift */,
 			);
 			path = Controller;
@@ -268,6 +271,7 @@
 				TargetAttributes = {
 					1380DEFC2AEF5470003761AB = {
 						CreatedOnToolsVersion = 13.4.1;
+						LastSwiftMigration = 1430;
 					};
 					1380DF152AEF5472003761AB = {
 						CreatedOnToolsVersion = 13.4.1;
@@ -304,7 +308,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				136B136E2AF1075200FF4E18 /* Asset.xcassets in Resources */,
 				1380DF102AEF5471003761AB /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,6 +338,7 @@
 				1380DF0B2AEF5470003761AB /* Contact.xcdatamodeld in Sources */,
 				1380DF392AEF5615003761AB /* ContactViewController.swift in Sources */,
 				1380DF432AEF5AD5003761AB /* Contact+CoreDataProperties.swift in Sources */,
+				1312ED2C2AF36122007755DE /* UITextField.swift in Sources */,
 				1380DF012AEF5470003761AB /* AppDelegate.swift in Sources */,
 				130CB7AC2AF0F12C005EF92E /* ContactDetailTableViewCell.swift in Sources */,
 				1380DF472AEF870A003761AB /* APICaller.swift in Sources */,
@@ -342,8 +346,9 @@
 				1380DF032AEF5470003761AB /* SceneDelegate.swift in Sources */,
 				130CB7A82AF0E02C005EF92E /* NotificationName.swift in Sources */,
 				130CB7AA2AF0EA1F005EF92E /* ContactDetailViewController.swift in Sources */,
-				130CB7A62AF0DD4F005EF92E /* AddContactViewController.swift in Sources */,
+				130CB7A62AF0DD4F005EF92E /* InputContactViewController.swift in Sources */,
 				1380DF422AEF5AD5003761AB /* Contact+CoreDataClass.swift in Sources */,
+				1312ED2E2AF36B73007755DE /* Selector.swift in Sources */,
 				1380DF3F2AEF596B003761AB /* Contact.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -511,14 +516,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RZ964C6Z7D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Contact/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -527,6 +535,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = tinit.Contact;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -537,14 +546,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RZ964C6Z7D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Contact/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
