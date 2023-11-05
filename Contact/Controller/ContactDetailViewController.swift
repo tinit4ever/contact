@@ -150,7 +150,7 @@ class ContactDetailViewController: UIViewController {
             topView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topView.leftAnchor.constraint(equalTo: view.leftAnchor),
             topView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            topView.heightAnchor.constraint(equalToConstant: 230)
+            topView.heightAnchor.constraint(equalToConstant: 225)
         ])
         view.addSubview(contactDetailTableView)
         contactDetailTableView.delegate = self
@@ -161,7 +161,6 @@ class ContactDetailViewController: UIViewController {
             contactDetailTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contactDetailTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
         confiureTopView()
     }
     
@@ -285,9 +284,10 @@ extension ContactDetailViewController: UITableViewDataSource {
         }
         cell.contentConfiguration = content
         
-        cell.layer.cornerRadius = 10 //set corner radius here
+//        cell.layer.cornerRadius = 10
         //        cell.layer.borderColor = cell.layer.borderColor  // set cell border color here
         //        cell.layer.borderWidth = 2 // set border width here
+        cell.selectionStyle = .none
         return cell
     }
     

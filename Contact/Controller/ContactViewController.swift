@@ -201,7 +201,7 @@ extension ContactViewController: UITableViewDataSource {
         
         contact = (viewModel?.sections[indexPath.section][indexPath.row])!
         cell.nameLabel.text = contact.name
-        //        cell.selectionStyle = .none
+        cell.selectionStyle = .none
         return cell
     }
     
@@ -211,9 +211,9 @@ extension ContactViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if let sourceContact = viewModel?.sections[sourceIndexPath.section][sourceIndexPath.row], let destinationContact = viewModel?.sections[destinationIndexPath.section][destinationIndexPath.row] {
-//            if sourceIndexPath.section != destinationIndexPath.section {
-//                sou
-//            }
+            //            if sourceIndexPath.section != destinationIndexPath.section {
+            //                sou
+            //            }
             viewModel?.swapContacts(sourceContact, destinationContact)
         }
     }
