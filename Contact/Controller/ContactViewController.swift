@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 protocol ContactViewControllerDelegate {
     func passData(contact: Contact)
@@ -17,6 +18,8 @@ class ContactViewController: UIViewController {
     var delegate: ContactViewControllerDelegate?
     var contacts: [Contact] = []
     
+    private var cancellables: Set<AnyCancellable> = []
+    
     private let contactTableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
         table.register(ContactTableViewCell.self, forCellReuseIdentifier: ContactTableViewCell.identifier)
@@ -26,29 +29,49 @@ class ContactViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureUI()
-        loadData()
         getObserve()
+        loadData()
     }
     
+    //    func getObserve() {
+    //        NotificationCenter.default.addObserver(self, selector: #selector(handleNewContactAdded), name: .addNewContact, object: nil)
+    //        NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteContact), name: .deleteContact, object: nil)
+    //        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateContact), name: .updateContact, object: nil)
+    //    }
+    
+    // Combine getObserve
     func getObserve() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewContactAdded), name: .addNewContact, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteContact), name: .deleteContact, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateContact), name: .updateContact, object: nil)
+        NotificationCenter.default.publisher(for: .addNewContact)
+            .sink { [weak self] _ in
+                self?.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: .deleteContact)
+            .sink { [weak self] _ in
+                self?.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: .updateContact)
+            .sink { [weak self] _ in
+                self?.reloadData()
+            }
+            .store(in: &cancellables)
     }
     
-    @objc func handleNewContactAdded() {
-        reloadData()
-    }
-    
-    @objc func handleDeleteContact() {
-        reloadData()
-    }
-    
-    @objc func handleUpdateContact() {
-        reloadData()
-    }
+    //    @objc func handleNewContactAdded() {
+    //        reloadData()
+    //    }
+    //
+    //    @objc func handleDeleteContact() {
+    //        reloadData()
+    //    }
+    //
+    //    @objc func handleUpdateContact() {
+    //        reloadData()
+    //    }
     
     func setViewModel(viewModel: ContactViewModelProtocol) {
         self.viewModel = viewModel
@@ -69,25 +92,35 @@ class ContactViewController: UIViewController {
         editButtonItem.action = #selector(editButtonTapped)
     }
     
-    func loadData() {
-        viewModel?.importContact(completion: {
-            self.viewModel?.getContact()
-            DispatchQueue.main.async {
-                self.contactTableView.reloadData()
-            }
-        })
-    }
+    //    func loadData() {
+    //        viewModel?.importContact(completion: {
+    //            self.viewModel?.getContact()
+    //            DispatchQueue.main.async {
+    //                self.contactTableView.reloadData()
+    //            }
+    //        })
+    //    }
     
+    //    func reloadData() {
+    //        viewModel?.getContact()
+    //        DispatchQueue.main.async {
+    //            self.contactTableView.reloadData()
+    //            print("Reload")
+    //        }
+    //    }
+    
+    // loadData Combine
+    func loadData() {
+        viewModel?.importContact()
+        reloadData()
+    }
+    // reloadData Combine
     func reloadData() {
         viewModel?.getContact()
-        DispatchQueue.main.async {
-            self.contactTableView.reloadData()
-            print("Reload")
-        }
+        contactTableView.reloadData()
     }
     
-    @objc
-    func addButtonTapped() {
+    @objc func addButtonTapped() {
         let inputContactViewController = InputContactViewController()
         inputContactViewController.contactViewModel = self.viewModel
         inputContactViewController.selector = .doneAddButton
@@ -170,7 +203,6 @@ extension ContactViewController: UITableViewDelegate {
         return swipeAction
         
     }
-    
 }
 
 extension ContactViewController: UITableViewDataSource {

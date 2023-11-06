@@ -7,11 +7,15 @@
 
 import Foundation
 import CoreData
+import Combine
 
 protocol ContactViewModelProtocol {
     func addContact(name: String, mail: String, phoneNumber: String)
     func updateContact(oldName: String, newName: String, newMail: String, newPhoneNumber: String)
-    func importContact(completion: @escaping () -> Void)
+    //ImportContact
+    //    func importContact(completion: @escaping () -> Void)
+    // Combine ImportContact
+    func importContact()
     func swapContacts(_ sourceContact: Contact,_ destinationContact: Contact)
     func getContact()
     func deleteContact(contact: Contact)
@@ -32,6 +36,7 @@ class ContactViewModel {
         }
         return container
     }()
+    private var cancellabels: Set<AnyCancellable> = []
     
     init(baseFetcher: BaseFetcher) {
         self.baseFetcher = baseFetcher
@@ -68,13 +73,13 @@ extension ContactViewModel: ContactViewModelProtocol {
     
     func updateContact(oldName: String, newName: String, newMail: String, newPhoneNumber: String) {
         let context = persistentContainer.viewContext
-
+        
         let fetchRequest = NSFetchRequest<Contact>(entityName: "Contact")
         fetchRequest.predicate = NSPredicate(format: "name == %@", oldName)
-
+        
         do {
             let existingContacts = try context.fetch(fetchRequest)
-
+            
             if let contact = existingContacts.first {
                 contact.name = newName
                 contact.mail = newMail
@@ -88,19 +93,37 @@ extension ContactViewModel: ContactViewModelProtocol {
             print("Error updating contact: \(error)")
         }
     }
-
-    func importContact(completion: @escaping () -> Void) {
-        baseFetcher?.getContact(completion: { result in
-            switch result {
-            case .success(let data):
-                self.importContactSuccess(data: data)
-                completion()
-            case .failure(let error):
-                self.importContactFaild(error: error)
-            }
-        })
-    }
     
+    // Normally importContact
+    //    func importContact(completion: @escaping () -> Void) {
+    //        baseFetcher?.getContact(completion: { result in
+    //            switch result {
+    //            case .success(let data):
+    //                self.importContactSuccess(data: data)
+    //                completion()
+    //            case .failure(let error):
+    //                self.importContactFaild(error: error)
+    //            }
+    //        })
+    //    }
+    
+    // Combine importContact
+    func importContact() {
+        baseFetcher?.getContact()
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.importContactFaild(error: error)
+                }
+            },
+                  receiveValue: { [weak self] data in
+                self?.importContactSuccess(data: data)
+            })
+            .store(in: &cancellabels)
+    }
     func swapContacts(_ sourceContact: Contact, _ destinationContact: Contact) {
         let context = persistentContainer.viewContext
         let tempName = sourceContact.name
@@ -163,7 +186,7 @@ extension ContactViewModel: ContactViewModelProtocol {
                 $0.name!.lowercased() < $1.name!.lowercased()
             }
             
-//            let sortedContacts = contacts
+            //            let sortedContacts = contacts
             
             if let mainContact = mainContact {
                 sections.append([mainContact])
